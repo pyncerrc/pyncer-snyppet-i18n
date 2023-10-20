@@ -10,8 +10,8 @@ use Pyncer\Database\ConnectionInterface;
 use Pyncer\Exception\UnexpectedValueException;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
-use Pyncer\Snyppet\I18n\Table\I18n\I18nMapper;
-use Pyncer\Snyppet\I18n\Table\I18n\I18nMapperQuery;
+use Pyncer\Snyppet\I18n\Table\Locale\LocaleMapper;
+use Pyncer\Snyppet\I18n\Table\Locale\LocaleMapperQuery;
 
 class InitializeMiddleware implements MiddlewareInterface
 {
@@ -35,17 +35,17 @@ class InitializeMiddleware implements MiddlewareInterface
             );
         }
 
-        // I18n mapper adaptor
-        if (!$handler->has(ID::mapperAdaptor('i18n'))) {
-            $i18nMapperQuery = new I18nMapperQuery($connection);
+        // Locale mapper adaptor
+        if (!$handler->has(ID::mapperAdaptor('locale'))) {
+            $i18nMapperQuery = new LocaleMapperQuery($connection);
             $i18nMapperQuery->setFilters(new FiltersQueryParam(
                 'enabled eq true'
             ));
             $i18nMapperAdaptor = new MapperAdaptor(
-                new I18nMapper($connection),
+                new LocaleMapper($connection),
                 $i18nMapperQuery
             );
-            $handler->set(ID::mapperAdaptor('i18n'), $i18nMapperAdaptor);
+            $handler->set(ID::mapperAdaptor('locale'), $i18nMapperAdaptor);
         }
 
         return $handler->next($request, $response);

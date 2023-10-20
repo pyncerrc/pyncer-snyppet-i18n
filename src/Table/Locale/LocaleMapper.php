@@ -1,5 +1,5 @@
 <?php
-namespace Pyncer\Snyppet\I18n\Table\I18n;
+namespace Pyncer\Snyppet\I18n\Table\Locale;
 
 use Pyncer\Data\Mapper\AbstractMapper;
 use Pyncer\Data\MapperQuery\MapperQueryInterface;
