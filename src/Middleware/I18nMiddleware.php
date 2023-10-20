@@ -4,30 +4,49 @@ namespace Pyncer\Snyppet\I18n\Middleware;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 use Pyncer\App\Identifier as ID;
+use Pyncer\Data\Mapper\MapperAdaptorInterface;
+use Pyncer\Database\ConnectionInterface;
 use Pyncer\Exception\UnexpectedValueException;
 use Pyncer\I18n\I18n;
 use Pyncer\Http\Server\MiddlewareInterface;
 use Pyncer\Http\Server\RequestHandlerInterface;
-use Pyncer\Snyppet\I18n\Table\I18n\I18nMapper;
-use Pyncer\Source\SourceMap;
+use Pyncer\Source\SourceMapInterface;
 
 class I18nMiddleware implements MiddlewareInterface
 {
     private string $sourceMapIdentifier;
+    private string $mapperAdaptorIdentifier;
 
     public function __construct(
-        string $sourceMapIdentifier,
+        ?string $sourceMapIdentifier = null,
+        ?string $mapperAdaptorIdentifier = null,
     ) {
-        $this->setSourceMapIdentifier($sourceMapIdentifier);
+        $this->setSourceMapIdentifier(
+            $sourceMapIdentifier ?? ID::sourceMap('i18n')
+        );
+
+        $this->setMapperAdaptorIdentifier(
+            $mapperAdaptorIdentifier ?? ID::mapperAdaptor('locale')
+        );
     }
 
-    public function getSourceMapIdentifier(): string
+    public function getSourceMapIdentifier(): ?string
     {
         return $this->sourceMapIdentifier;
     }
-    public function setSourceMapIdentifier(string $value): static
+    public function setSourceMapIdentifier(?string $value): static
     {
         $this->sourceMapIdentifier = $value;
+        return $this;
+    }
+
+    public function getMapperAdaptorIdentifier(): string
+    {
+        return $this->mapperAdaptorIdentifier;
+    }
+    public function setMapperAdaptorIdentifier(string $value): static
+    {
+        $this->mapperAdaptorIdentifier = $value;
         return $this;
     }
 
@@ -49,48 +68,59 @@ class I18nMiddleware implements MiddlewareInterface
             throw new UnexpectedValueException('Invalid database connection.');
         }
 
+        // Mapper adaptor
+        if (!$handler->has($this->getMapperAdaptorIdentifier())) {
+            throw new UnexpectedValueException('Mapper adaptor expected.');
+        }
+
+        $mapperAdaptor = $handler->get($this->getMapperAdaptorIdentifier());
+        if (!$mapperAdaptor instanceof MapperAdaptorInterface) {
+            throw new UnexpectedValueException(
+                'Invalid mapper adaptor.'
+            );
+        }
+
         // Source map
         if (!$handler->has($this->getSourceMapIdentifier())) {
             throw new UnexpectedValueException('Source map expected.');
         }
 
         $sourceMap = $handler->get($this->getSourceMapIdentifier());
-        if (!$sourceMap instanceof SourceMap) {
+        if (!$sourceMap instanceof SourceMapInterface) {
             throw new UnexpectedValueException('Invalid source map.');
         }
 
-        $i18n = new I18n($sourceMap);
-
         $defaultLocaleCode =  null;
         $userLocaleCode = null;
-        $userI18nId = null;
+        $userLocaleId = null;
 
         if ($handler->has(ID::user())) {
             $userValues = $handler->get(ID::user('value'));
-            $userI18nId = $userValues->getInt('i18n_id');
+            $userLocaleId = $userValues->getInt('locale_id');
         }
 
-        $i18nMapper = new I18nMapper($connection);
-        $result = $i18nMapper->selectAllByColumns([
-            'enabled' => true
-        ]);
-
+        $i18n = new I18n($sourceMap);
         $localeCodes = [];
 
-        foreach ($result as $i18nModel) {
-            $localeCodes[] = $i18nModel->getCode();
+        $mapper = $mapperAdaptor->getMapper();
+        $result = $mapper->selectAll($mapperAdaptor->getMapperQuery());
 
-            if ($userI18nId === $i18nModel->getId()) {
-                $userLocaleCode = $i18nModel->getCode();
+        foreach ($result as $model) {
+            $data = $mapperAdaptor->forgeData($model);
+
+            $localeCodes[] = $data['code'];
+
+            if ($userLocaleId === $data['id']) {
+                $userLocaleCode = $data['code'];
             }
 
             if ($defaultLocaleCode === null ||
-                $i18nModel->getDefault()
+                $data['default']
             ) {
-                $defaultLocaleCode = $i18nModel->getCode();
+                $defaultLocaleCode = $data['code'];
             }
 
-            $i18n->addLocale($i18nModel->getCode());
+            $i18n->addLocale($data['code']);
         }
 
         if (!$localeCodes) {

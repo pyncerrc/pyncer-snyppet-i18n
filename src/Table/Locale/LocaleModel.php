@@ -1,9 +1,9 @@
 <?php
-namespace Pyncer\Snyppet\I18n\Table\I18n;
+namespace Pyncer\Snyppet\I18n\Table\Locale;
 
 use Pyncer\Data\Model\AbstractModel;
 
-class I18nModel extends AbstractModel
+class LocaleModel extends AbstractModel
 {
     public function getCode(): string
     {

@@ -1,13 +1,12 @@
 <?php
-namespace Pyncer\Snyppet\I18n\Table\I18n;
+namespace Pyncer\Snyppet\I18n\Table\Locale;
 
-use Pyncer\Snyppet\I18n\Table\I18n\I18nModel;
 use Pyncer\Data\MapperQuery\AbstractRequestMapperQuery;
 use Pyncer\Data\Model\ModelInterface;
 use Pyncer\Database\ConnectionInterface;
 use Pyncer\Database\Record\SelectQueryInterface;
 
-class I18nMapperQuery extends AbstractRequestMapperQuery
+class LocaleMapperQuery extends AbstractRequestMapperQuery
 {
     public function overrideModel(
         ModelInterface $model,

@@ -1,12 +1,12 @@
 <?php
-namespace Pyncer\Snyppet\I18n\Table\I18n;
+namespace Pyncer\Snyppet\I18n\Table\Locale;
 
 use Pyncer\Data\Validation\AbstractValidator;
 use Pyncer\Database\ConnectionInterface;
 use Pyncer\Validation\Rule\BoolRule;
 use Pyncer\Validation\Rule\StringRule;
 
-class I18nValidator extends AbstractValidator
+class LocaleValidator extends AbstractValidator
 {
     public function __construct(ConnectionInterface $connection)
     {

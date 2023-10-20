@@ -1,24 +1,24 @@
 <?php
-namespace Pyncer\Snyppet\I18n\Component\Module\I18n;
+namespace Pyncer\Snyppet\I18n\Component\Module\Locale;
 
 use Pyncer\App\Identifier as ID;
 use Pyncer\Component\Module\AbstractDeleteIndexModule;
 use Pyncer\Data\Mapper\MapperInterface;
 use Pyncer\Data\MapperQuery\MapperQueryInterface;
-use Pyncer\Snyppet\I18n\Table\I18n\I18nMapper;
-use Pyncer\Snyppet\I18n\Table\I18n\I18nMapperQuery;
+use Pyncer\Snyppet\I18n\Table\Locale\LocaleMapper;
+use Pyncer\Snyppet\I18n\Table\Locale\LocaleMapperQuery;
 
-class DeleteI18nIndexModule extends AbstractDeleteIndexModule
+class DeleteLocaleIndexModule extends AbstractDeleteIndexModule
 {
     protected function forgeMapper(): MapperInterface
     {
         $connection = $this->get(ID::DATABASE);
-        return new I18nMapper($connection);
+        return new LocaleMapper($connection);
     }
 
     protected function forgeMapperQuery(): MapperQueryInterface
     {
         $connection = $this->get(ID::DATABASE);
-        return new I18nMapperQuery($connection, $this->request);
+        return new LocaleMapperQuery($connection, $this->request);
     }
 }

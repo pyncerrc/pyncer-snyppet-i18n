@@ -7,7 +7,7 @@ class Install extends AbstractInstall
 {
     protected function safeInstall(): bool
     {
-        $this->connection->createTable('i18n')
+        $this->connection->createTable('locale')
             ->serial('id')
             ->string('code', 25)->index()
             ->string('short_code', 25)->null()->index()
@@ -17,7 +17,7 @@ class Install extends AbstractInstall
             ->bool('enabled')->default(false)->index()
             ->execute();
 
-        $this->connection->insert('i18n')
+        $this->connection->insert('locale')
             ->values([
                 'code' => 'en',
                 'short_code' => null,
@@ -28,7 +28,7 @@ class Install extends AbstractInstall
             ])
             ->execute();
 
-        $this->connection->insert('i18n')
+        $this->connection->insert('locale')
             ->values([
                 'code' => 'en-US',
                 'short_code' => 'en',
@@ -39,7 +39,7 @@ class Install extends AbstractInstall
             ])
             ->execute();
 
-        $this->connection->insert('i18n')
+        $this->connection->insert('locale')
             ->values([
                 'code' => 'en-CA',
                 'short_code' => 'en',
@@ -50,7 +50,7 @@ class Install extends AbstractInstall
             ])
             ->execute();
 
-        $this->connection->insert('i18n')
+        $this->connection->insert('locale')
             ->values([
                 'code' => 'en-AU',
                 'short_code' => 'en',
@@ -61,7 +61,7 @@ class Install extends AbstractInstall
             ])
             ->execute();
 
-        $this->connection->insert('i18n')
+        $this->connection->insert('locale')
             ->values([
                 'code' => 'en-UK',
                 'short_code' => 'en',
@@ -72,7 +72,7 @@ class Install extends AbstractInstall
             ])
             ->execute();
 
-        $this->connection->insert('i18n')
+        $this->connection->insert('locale')
             ->values([
                 'code' => 'fr',
                 'short_code' => null,
@@ -83,7 +83,7 @@ class Install extends AbstractInstall
             ])
             ->execute();
 
-        $this->connection->insert('i18n')
+        $this->connection->insert('locale')
             ->values([
                 'code' => 'fr-CA',
                 'short_code' => 'fr',
@@ -94,7 +94,7 @@ class Install extends AbstractInstall
             ])
             ->execute();
 
-        $this->connection->insert('i18n')
+        $this->connection->insert('locale')
             ->values([
                 'code' => 'ja',
                 'short_code' => null,
@@ -105,7 +105,7 @@ class Install extends AbstractInstall
             ])
             ->execute();
 
-        $this->connection->insert('i18n')
+        $this->connection->insert('locale')
             ->values([
                 'code' => 'ru',
                 'short_code' => null,
@@ -121,8 +121,8 @@ class Install extends AbstractInstall
 
     protected function safeUninstall(): bool
     {
-        if ($this->connection->hasTable('i18n')) {
-            $this->connection->dropTable('i18n');
+        if ($this->connection->hasTable('locale')) {
+            $this->connection->dropTable('locale');
         }
 
         return true;
