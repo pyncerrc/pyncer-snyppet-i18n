@@ -27,6 +27,6 @@ class PatchLocaleItemModule extends AbstractPatchItemModule
     protected function forgeMapperQuery(): MapperQueryInterface
     {
         $connection = $this->get(ID::DATABASE);
-        return new LocaleMapperQuery($connection, $this->request);
+        return new LocaleMapperQuery($connection);
     }
 }
