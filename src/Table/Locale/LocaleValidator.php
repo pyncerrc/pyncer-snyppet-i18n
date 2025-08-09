@@ -4,6 +4,7 @@ namespace Pyncer\Snyppet\I18n\Table\Locale;
 use Pyncer\Data\Validation\AbstractValidator;
 use Pyncer\Database\ConnectionInterface;
 use Pyncer\Validation\Rule\BoolRule;
+use Pyncer\Validation\Rule\RequiredRule;
 use Pyncer\Validation\Rule\StringRule;
 
 class LocaleValidator extends AbstractValidator
@@ -14,6 +15,7 @@ class LocaleValidator extends AbstractValidator
 
         $this->addRules(
             'code',
+            new RequiredRule(),
             new StringRule(
                 maxLength: 25,
             ),
@@ -29,6 +31,7 @@ class LocaleValidator extends AbstractValidator
 
         $this->addRules(
             'name',
+            new RequiredRule(),
             new StringRule(
                 maxLength: 50,
             ),
